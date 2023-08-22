@@ -15,5 +15,23 @@ set -e
 # Code under repo is checked out to ${KOKORO_ARTIFACTS_DIR}/github.
 # The final directory name in this path is determined by the scm name specified
 # in the job configuration.
+
+export PATH="$HOME/.local/bin:$PATH"
+
+sudo apt update
+sudo apt --assume-yes install python3 python3-pip nodejs npm
+
+pip install jupyterlab
+
 cd "${KOKORO_ARTIFACTS_DIR}/github/dataproc-jupyter-plugin"
-./build.sh
+# jlpm build
+# python3 -m build
+pip3 install -e ".[test]"
+# Link your development version of the extension with JupyterLab
+jupyter labextension develop . --overwrite
+# Server extension must be manually installed in develop mode
+jupyter server extension enable dataproc_jupyter_plugin
+# Rebuild extension Typescript source after making changes
+jlpm build
+
+jupyter lab
