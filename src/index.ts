@@ -252,6 +252,7 @@ const extension: JupyterFrontEndPlugin<void> = {
         rank: 2
       });
     }
+    console.log('JupyterLab extension dataproc_jupyter_plugin is activated!');
   }
 };
 

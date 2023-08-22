@@ -34,4 +34,7 @@ jupyter server extension enable dataproc_jupyter_plugin
 # Rebuild extension Typescript source after making changes
 jlpm build
 
-jupyter lab
+cd ./ui-tests
+jlpm install
+jlpm playwright install
+jlpm playwright test
