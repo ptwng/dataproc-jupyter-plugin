@@ -18,8 +18,8 @@ set -e
 
 export PATH="$HOME/.local/bin:$PATH"
 
-sudo apt update
-sudo apt --assume-yes install python3 python3-pip nodejs npm
+sudo apt-get update
+sudo apt-get --assume-yes install python3 python3-pip nodejs
 
 pip install jupyterlab
 
