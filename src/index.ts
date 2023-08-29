@@ -55,6 +55,7 @@ import { IDocumentManager } from '@jupyterlab/docmanager';
 import { GCSDrive } from './gcs/gcsDrive';
 import { GcsBrowserWidget } from './gcs/gcsBrowserWidget';
 import { DataprocLoggingService } from './utils/loggingService';
+import { DataprocCompanionAiCompletionPlugin } from './completionExtension/dataprocCompanionAiCompletionPlugin';
 
 const iconDpms = new LabIcon({
   name: 'launcher:dpms-icon',
@@ -481,4 +482,4 @@ const extension: JupyterFrontEndPlugin<void> = {
   }
 };
 
-export default extension;
+export default [extension, DataprocCompanionAiCompletionPlugin];
