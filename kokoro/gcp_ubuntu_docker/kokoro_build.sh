@@ -43,8 +43,12 @@ jlpm build
 # Aslo build python packages to dist/
 python -m build
 
-# Run Playwright Tests
+# Run Playwright Tests for latest jupyter lab build
 cd ./ui-tests
 jlpm install
 jlpm playwright install
+PLAYWRIGHT_JUNIT_OUTPUT_NAME=test-results/sponge_log.xml jlpm playwright test --reporter=junit
+
+# Test 3.6.6
+pip install  --force-reinstall "jupyterlab==3.6.6"
 PLAYWRIGHT_JUNIT_OUTPUT_NAME=test-results/sponge_log.xml jlpm playwright test --reporter=junit
