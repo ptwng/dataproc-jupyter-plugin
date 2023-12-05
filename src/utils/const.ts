@@ -16,7 +16,7 @@
  */
 
 import { requestAPI } from '../handler/handler';
-export const VERSION_DETAIL = "0.1.66"
+export const VERSION_DETAIL = '0.1.66';
 export const CREATE_CLUSTER_URL =
   'https://console.cloud.google.com/dataproc/clusters';
 export const CREATE_BATCH_URL =
@@ -32,19 +32,34 @@ interface IGcpUrlResponseData {
   storage_url: string;
 }
 
-const data = await requestAPI('getGcpServiceUrls');
-const gcpServiceUrl = data as IGcpUrlResponseData ;
-const urlResponseJson = JSON.stringify(gcpServiceUrl);
-localStorage.setItem('GCP_SERVICE_URLS', urlResponseJson);
-const storedUrlResponseJson = localStorage.getItem('GCP_SERVICE_URLS');
-const storedUrlResponseObj = storedUrlResponseJson
-  ? JSON.parse(storedUrlResponseJson)
-  : null;
-export const BASE_URL = storedUrlResponseObj.dataproc_url + 'v1';
-export const BASE_URL_NETWORKS =
-  storedUrlResponseObj.compute_url;
-export const BASE_URL_META = storedUrlResponseObj.metastore_url + 'v1';
-export const BASE_URL_KEY = storedUrlResponseObj.cloudkms_url + 'v1';
+export const gcpServiceUrls = (async () => {
+  const data = (await requestAPI('getGcpServiceUrls')) as IGcpUrlResponseData;
+  const storage_url = new URL(data.storage_url);
+  const storage_upload_url = new URL(data.storage_url);
+
+  if (
+    !storage_url.pathname ||
+    storage_url.pathname === '' ||
+    storage_url.pathname === '/'
+  ) {
+    // If the overwritten  storage_url doesn't contain a path, add it.
+    storage_url.pathname = 'storage/v1';
+  }
+  storage_upload_url.pathname = 'upload/storage/v1';
+
+  return {
+    DATAPROC: data.dataproc_url + 'v1',
+    COMPUTE: data.compute_url,
+    METASTORE: data.metastore_url + 'v1',
+    CLOUD_KMS: data.cloudkms_url + 'v1',
+    CLOUD_RESOURCE_MANAGER: data.cloudresourcemanager_url + 'v1',
+    CATALOG: data.datacatalog_url + 'v1',
+    COLUMN: data.datacatalog_url + 'v1',
+    STORAGE: storage_url.toString(),
+    STORAGE_UPLOAD: storage_upload_url.toString()
+  };
+})();
+
 export const VIEW_LOGS_URL = 'https://console.cloud.google.com/logs';
 export const POLLING_TIME_LIMIT = 10000;
 export const API_HEADER_CONTENT_TYPE = 'application/json';
@@ -88,18 +103,11 @@ export const METASTORE_SERVICE_LABEL = 'Metastore service';
 export const DATAPROC_CLUSTER_KEY = 'dataprocCluster';
 export const DATAPROC_CLUSTER_LABEL = 'Dataproc cluster';
 export const SPARK_HISTORY_SERVER_KEY = 'sparkHistoryServerConfig';
-export const PROJECT_LIST_URL =
-  storedUrlResponseObj.cloudresourcemanager_url + 'v1/projects';
 export const USER_INFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
-export const REGION_URL =
-  storedUrlResponseObj.compute_url + '/projects';
 export const LOGIN_STATE = '1';
 export const QUERY_TABLE = 'system=dataproc_metastore AND type=TABLE parent=';
 export const QUERY_DATABASE =
   'system=dataproc_metastore AND type=DATABASE parent=';
-export const CATALOG_SEARCH =
-  storedUrlResponseObj.datacatalog_url + 'v1/catalog:search';
-export const COLUMN_API = storedUrlResponseObj.datacatalog_url + 'v1/';
 export const MONTH_NAMES = [
   'Jan',
   'Feb',
@@ -165,10 +173,6 @@ export const SPARK_HISTORY_SERVER = 'Spark History Server';
 export const DEFAULT_LABEL_DETAIL = 'client:dataproc-jupyter-plugin';
 export const JOB_FIELDS_EXCLUDED = ['queryList', 'properties', 'args'];
 export const BATCH_FIELDS_EXCLUDED = ['queryList', 'properties'];
-export const STORAGE_DOMAIN_URL = storedUrlResponseObj.storage_url;
-export const GCS_UPLOAD_URL =
-  'https://storage.googleapis.com/upload/storage/v1/b';
-export const CONTENT_STORAGE_URL = "https://content-storage.googleapis.com";
 export const KEY_MESSAGE =
   'Example format:projects/<project-name>/locations/<location-name>/keyRings/<keyring-name>/cryptoKeys/<key-name>';
 export enum HTTP_METHOD {
